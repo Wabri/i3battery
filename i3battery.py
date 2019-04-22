@@ -5,12 +5,8 @@
 # ------------ Signal handler ------------ #
 ############################################
 
-import glob
-import time
-import os
 import signal
 import sys
-
 
 def signal_handler(sig, frame):
     print("\nI3Battery stop!")
@@ -22,6 +18,8 @@ signal.signal(signal.SIGINT, signal_handler)
 ############################################
 # ------------ Notify manager ------------ #
 ############################################
+
+import os
 
 def notify_warning(use, level):
     os.system("{} '{}'".format(use, str(level)))
@@ -38,6 +36,7 @@ audio_use = "play"
 notify = True
 notify_use = "notify-send"
 warning_threshold = [20, 15, 5]
+time_cycle = 20.0
 
 for arg in sys.argv[1:]:
     key_value = arg.split("=")
@@ -59,9 +58,16 @@ for arg in sys.argv[1:]:
         for threshold in range(len(warnings)):
             warning_threshold[threshold] = (int)(warnings[threshold])
 
+    if "--time" in key_value[0]:
+        time_cycle = float(key_value[1])
+
+
 ############################################
 # ------------ Battery manager ----------- #
 ############################################
+
+import time
+import glob
 
 power_path = "/sys/class/power_supply/"
 
@@ -141,4 +147,4 @@ while True:
                 if notify:
                     notify_warning(notify_use,"Notice: battery full")
 
-    time.sleep(10)
+    time.sleep(time_cycle)
