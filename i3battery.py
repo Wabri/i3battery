@@ -21,8 +21,8 @@ signal.signal(signal.SIGINT, signal_handler)
 
 import os
 
-def notify_warning(use, level):
-    os.system("{} '{}'".format(use, str(level)))
+def notify_warning(use, text):
+    os.system("{} '{}'".format(use, str(text)))
 
 def audio_warning(use):
     os.system("{} ~/.config/i3battery/warning.ogg".format(use))
@@ -37,6 +37,8 @@ notify = True
 notify_use = "notify-send"
 warning_threshold = [20, 15, 5]
 time_cycle = 20.0
+test_audio = False
+test_notify = False
 
 for arg in sys.argv[1:]:
     key_value = arg.split("=")
@@ -61,6 +63,20 @@ for arg in sys.argv[1:]:
     if "--time" in key_value[0]:
         time_cycle = float(key_value[1])
 
+    if "--test_audio" in key_value[0]:
+        test_audio = True
+
+    if "--test_notify" in key_value[0]:
+        test_notify = True
+
+if test_audio:
+    audio_warning(audio_use)
+
+if test_notify:
+    notify_warning(notify_use,"Test")
+
+if test_audio or test_notify:
+    exit()
 
 ############################################
 # ------------ Battery manager ----------- #
@@ -75,6 +91,8 @@ batteries = list()
 for bat_dir in glob.glob(power_path + "BAT*"):
     batteries.append(bat_dir)
 
+adapter = glob.glob(power_path+"AC*")[0]
+
 battery = "BAT0" if "BAT0" in batteries.pop() else exit()
 
 has_alerted1 = False
@@ -82,7 +100,7 @@ has_alerted2 = False
 has_alerted3 = False
 
 power_supply_online = True if float(
-    open(power_path + "AC/online", 'r').read()) == 1 else False
+    open(adapter+"/online", 'r').read()) == 1 else False
 
 has_alerted_full = False
 has_alerted_charging = power_supply_online
@@ -90,7 +108,7 @@ has_alerted_discharging = not power_supply_online
 
 while True:
     power_supply_online = True if float(
-        open(power_path + "AC/online", 'r').read()) == 1 else False
+        open(adapter+"/online", 'r').read()) == 1 else False
     capacity = float(open(power_path+battery+"/capacity", 'r').read())
     print("-"*10)
     print("Power: {}%".format(capacity))

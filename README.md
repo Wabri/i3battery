@@ -4,30 +4,18 @@ I made this script for my configuration of [i3wm](i3wm.org) because in this dist
 
 This script regularly checks your battery charge and shows a warning in a text notify and if abilitate also an audio warning if you are about to completely drain your battery.
 
-## Dependencies
-
-For the default notify settings you need to install a notify deamon:
-```bash
-apt-get install libnotify-bin notify-osd
-```
-For the default audio settings you need to install sox:
-```bash
-apt-get install sox
-```
-
-You can use different notify sender and audio play by set in arguments when i3battery is lauch:
-```bash
-i3battery --audio_use=<command_to_use> --notify_use=<command_to_use>
-```
-
 ## Install
 
 You need to clone the repository with:
 ```bash
 git clone https://github.com/Wabri/i3battery
 ```
-Then you can choose to run and install all or the basics:
-* basics:
+Then move into i3battery directory:
+```bash
+cd i3battery
+```
+And finally run and install i3battery:
+* basics funcionality:
 	```bash
 	make install
 	```
@@ -37,12 +25,32 @@ Then you can choose to run and install all or the basics:
 	```
 Now you can use i3battery.
 
+For the default notify settings you need to install a notify deamon:
+```bash
+libnotify-bin notify-osd
+```
+For the default audio settings you need to install sox:
+```bash
+sox
+```
+These dependencies are install with the make all command or you can install with apt-get.
+
+To test notifications and audio you can use the argument test:
+```bash
+i3battery --test_notify --audio_notify --audio_use=<command_audio> --notify_use=<command_notify>
+```
+
 ## I3 users
 
 To use this on i3wm you need to append to your i3 config file this line:
 ```i3wm
 exec --no-startup-id i3battery
 ```
+The most common use is audio without notifications:
+```i3wm
+exec --no-startup-id i3battery --audio --no-notify
+```
+You can configure the running with the configurations below.
 
 ## Configurations
 
@@ -60,3 +68,8 @@ i3battery --audio --audio_use=play --no-notify --notify_use=notify-send --wt=40,
 ```
 
 The default audio warning is installed on `~/.config/i3battery/warning.ogg`, you can change by override this file.
+
+You can use different notify sender and audio play by set in arguments when i3battery is lauch:
+```bash
+i3battery --audio_use=<command_to_use> --notify_use=<command_to_use>
+```
