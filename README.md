@@ -31,7 +31,7 @@ Then you can choose to run and install all or the basics:
 	```bash
 	make install
 	```
-* all:
+* all with audio support and notifications:
 	```bash
 	make all
 	```
