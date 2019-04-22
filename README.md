@@ -26,10 +26,15 @@ You need to clone the repository with:
 ```bash
 git clone https://github.com/Wabri/i3battery
 ```
-Then run the make file:
-```bash
-make install
-```
+Then you can choose to run and install all or the basics:
+* basics:
+	```bash
+	make install
+	```
+* all:
+	```bash
+	make all
+	```
 Now you can use i3battery.
 
 ## I3 users
