@@ -69,7 +69,7 @@ i3battery --audio --audio_use=play --no-notify --notify_use=notify-send --wt=40,
 
 The default audio warning is installed on `~/.config/i3battery/warning.ogg`, you can change by override this file.
 
-You can use different notify sender and audio play by set in arguments when i3battery is lauch:
+You can use different notify sender and audio play with this arguments:
 ```bash
 i3battery --audio_use=<command_to_use> --notify_use=<command_to_use>
 ```
