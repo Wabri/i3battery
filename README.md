@@ -15,11 +15,11 @@ Then move into i3battery directory:
 cd i3battery
 ```
 And finally run and install i3battery:
-* basics funcionality:
+* basics functions:
 	```bash
 	make install
 	```
-* all with audio support and notifications:
+* all audio support and notifications:
 	```bash
 	make all
 	```
