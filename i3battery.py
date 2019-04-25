@@ -2,6 +2,18 @@
 # -*- coding: utf-8 -*-
 
 ############################################
+# ------------ Notify manager ------------ #
+############################################
+
+import os
+
+def notify_warning(use, text):
+    os.system("{} '{}'".format(use, str(text)))
+
+def audio_warning(use):
+    os.system("{} ~/.config/i3battery/warning.ogg".format(use))
+
+############################################
 # ------------ Signal handler ------------ #
 ############################################
 
@@ -14,18 +26,6 @@ def signal_handler(sig, frame):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-
-############################################
-# ------------ Notify manager ------------ #
-############################################
-
-import os
-
-def notify_warning(use, text):
-    os.system("{} '{}'".format(use, str(text)))
-
-def audio_warning(use):
-    os.system("{} ~/.config/i3battery/warning.ogg".format(use))
 
 ############################################
 # ------------- Config loader ------------ #
@@ -78,6 +78,17 @@ if test_notify:
 if test_audio or test_notify:
     exit()
 
+warning_threshold = sorted(warning_threshold, reverse=True)
+
+print(audio)
+print(audio_use)
+print(notify)
+print(notify_use)
+print(warning_threshold)
+print(time_cycle)
+print(test_audio)
+print(test_notify)
+
 ############################################
 # ------------ Battery manager ----------- #
 ############################################
@@ -95,9 +106,7 @@ adapter = glob.glob(power_path+"AC*")[0]
 
 battery = "BAT0" if "BAT0" in batteries.pop() else exit()
 
-has_alerted1 = False
-has_alerted2 = False
-has_alerted3 = False
+has_alerted = [False, False, False]
 
 power_supply_online = True if float(
     open(adapter+"/online", 'r').read()) == 1 else False
@@ -105,6 +114,8 @@ power_supply_online = True if float(
 has_alerted_full = False
 has_alerted_charging = power_supply_online
 has_alerted_discharging = not power_supply_online
+
+threshold = 2
 
 while True:
     power_supply_online = True if float(
@@ -117,42 +128,27 @@ while True:
 
     if not power_supply_online:
 
-        if capacity < warning_threshold[2] and not has_alerted3 and has_alerted2:
-            has_alerted3 = True
+        if capacity < warning_threshold[threshold] and not has_alerted[threshold] and has_alerted[threshold - 1]:
+            has_alerted[threshold] = True
+            print("Warning battery below threshold {}".format(warning_threshold[threshold]))
             if notify:
                 notify_warning(notify_use,
-                    "Warning: battery below {}".format(warning_threshold[2]))
+                    "Warning: battery below {}".format(warning_threshold[threshold]))
             if audio:
                 audio_warning(audio_use)
-
-        if capacity < warning_threshold[1] and not has_alerted2 and has_alerted1:
-            has_alerted2 = True
-            if notify:
-                notify_warning(notify_use,
-                    "Warning: battery below {}".format(warning_threshold[1]))
-            if audio:
-                audio_warning(audio_use)
-
-        if capacity < warning_threshold[0] and not has_alerted1:
-            has_alerted1 = True
-            if notify:
-                notify_warning(notify_use,
-                    "Warning: battery below {}".format(warning_threshold[0]))
-            if audio:
-                audio_warning(audio_use)
+            threshold -= 1
 
         if has_alerted_charging and not has_alerted_discharging:
             has_alerted_discharging = False
-            if notify:
+            if no-notify:
                 notify_warning(notify_use,"Warning: battery discharging")
 
         has_alerted_charging = False
         has_alerted_full = False
     else:
-        has_alerted1 = False
-        has_alerted2 = False
-        has_alerted3 = False
+        has_alerted = [False, False, False]
         has_alerted_discharging = False
+        threshold = 2
 
         if not has_alerted_charging:
             has_alerted_charging = True
@@ -162,7 +158,7 @@ while True:
         if capacity >= 98:
             if not has_alerted_full:
                 has_alerted_full = True
-                if notify:
+                if no-notify:
                     notify_warning(notify_use,"Notice: battery full")
 
     time.sleep(time_cycle)
