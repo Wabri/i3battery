@@ -80,15 +80,6 @@ if test_audio or test_notify:
 
 warning_threshold = sorted(warning_threshold, reverse=True)
 
-print(audio)
-print(audio_use)
-print(notify)
-print(notify_use)
-print(warning_threshold)
-print(time_cycle)
-print(test_audio)
-print(test_notify)
-
 ############################################
 # ------------ Battery manager ----------- #
 ############################################
@@ -140,7 +131,7 @@ while True:
 
         if has_alerted_charging and not has_alerted_discharging:
             has_alerted_discharging = False
-            if no-notify:
+            if notify:
                 notify_warning(notify_use,"Warning: battery discharging")
 
         has_alerted_charging = False
@@ -158,7 +149,7 @@ while True:
         if capacity >= 98:
             if not has_alerted_full:
                 has_alerted_full = True
-                if no-notify:
+                if notify:
                     notify_warning(notify_use,"Notice: battery full")
 
     time.sleep(time_cycle)
