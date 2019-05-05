@@ -9,6 +9,18 @@ import signal
 import sys
 
 ############################################
+# ------------ Notify manager ------------ #
+############################################
+
+import os
+
+def notify_warning(use, text):
+    os.system("{} '{}'".format(use, str(text)))
+
+def audio_warning(use):
+    os.system("{} ~/.config/i3battery/warning.ogg".format(use))
+
+############################################
 # ------------ Signal handler ------------ #
 ############################################
 
@@ -103,7 +115,9 @@ adapter = glob.glob(power_path+"AC*")[0]
 battery = "BAT0" if "BAT0" in batteries.pop() else exit()
 
 has_alerted = [False, False, False]
+
 threshold = 2
+
 
 power_supply_online = True if float(
     open(adapter+"/online", 'r').read()) == 1 else False
@@ -111,6 +125,8 @@ power_supply_online = True if float(
 has_alerted_full = False
 has_alerted_charging = power_supply_online
 has_alerted_discharging = not power_supply_online
+
+threshold = 2
 
 while True:
     power_supply_online = True if float(
@@ -129,6 +145,7 @@ while True:
             if notify:
                 notify_warning(notify_use,
                                "Warning: battery below {}".format(warning_threshold[threshold]))
+
             if audio:
                 audio_warning(audio_use)
             threshold -= 1
