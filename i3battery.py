@@ -12,8 +12,6 @@ import sys
 # ------------ Notify manager ------------ #
 ############################################
 
-import os
-
 
 def notify_warning(use, text):
     os.system("{} '{}'".format(use, str(text)))
