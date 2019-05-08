@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
 import glob
-import time
 import os
+import playsound
 import signal
 import sys
+import time
+
 
 ############################################
 # ------------ Notify manager ------------ #
 ############################################
 
-import os
 
 def notify_warning(use, text):
     os.system("{} '{}'".format(use, str(text)))
 
-def audio_warning(use):
-    os.system("{} ~/.config/i3battery/warning.ogg".format(use))
+
+def audio_warning(path):
+    playsound.playsound(path)
 
 ############################################
 # ------------ Signal handler ------------ #
@@ -39,7 +40,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 audio = False
-audio_use = "play"
+audio_path = '~/.config/i3battery/audio/warning.wav'
 notify = True
 notify_use = "notify-send"
 warning_threshold = [20, 15, 5]
@@ -53,8 +54,8 @@ for arg in sys.argv[1:]:
     if "--audio" in key_value[0]:
         audio = True
 
-    if "--audio_use" in key_value[0]:
-        audio_use = str(key_value[1])
+    if "--audio-path" in key_value[0]:
+        audio_path = key_value[1]
 
     if "--no-notify" in key_value[0]:
         notify = False
@@ -77,7 +78,7 @@ for arg in sys.argv[1:]:
         test_notify = True
 
 if test_audio:
-    audio_warning(audio_use)
+    audio_warning(audio_path)
 
 if test_notify:
     notify_warning(notify_use, "Test")
@@ -141,13 +142,14 @@ while True:
 
         if capacity < warning_threshold[threshold] and not has_alerted[threshold] and has_alerted[threshold - 1]:
             has_alerted[threshold] = True
-            print("Warning battery below threshold {}".format(warning_threshold[threshold]))
+            print("Warning battery below threshold {}".format(
+                warning_threshold[threshold]))
             if notify:
                 notify_warning(notify_use,
                                "Warning: battery below {}".format(warning_threshold[threshold]))
 
             if audio:
-                audio_warning(audio_use)
+                audio_warning(audio_path)
             threshold -= 1
 
         if has_alerted_charging and not has_alerted_discharging:
