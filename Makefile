@@ -4,8 +4,10 @@ install:
 	mkdir ~/.config/i3battery
 	sudo cp resources/warning.ogg ~/.config/i3battery/warning.ogg
 
-all: install
-	sudo apt-get install libnotify-bin notify-osd sox
+notify: install
+	python3 -m pip install notify2
+
+all: notify
 
 unistall:
 	sudo rm -r /usr/bin/i3battery
