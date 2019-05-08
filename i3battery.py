@@ -3,11 +3,22 @@
 
 import glob
 import os
-import playsound
 import signal
 import sys
 import time
 
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+from pygame import mixer
+
+############################################
+# ------------ Signal handler ------------ #
+############################################
+
+def signal_handler(sig, frame):
+    print("\nI3Battery stop!")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
 
 ############################################
 # ------------ Notify manager ------------ #
@@ -19,20 +30,11 @@ def notify_warning(use, text):
 
 
 def audio_warning(path):
-    playsound.playsound(path)
-
-############################################
-# ------------ Signal handler ------------ #
-############################################
-
-
-def signal_handler(sig, frame):
-    print("\nI3Battery stop!")
-    sys.exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
-
+    mixer.init()
+    sound = mixer.Sound(path)
+    sound.play()
+    time.sleep(sound.get_length())
+    mixer.quit()
 
 ############################################
 # ------------- Config loader ------------ #
@@ -40,7 +42,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 audio = False
-audio_path = '~/.config/i3battery/audio/warning.wav'
+audio_path = os.path.expanduser('~') + '/.config/i3battery/audio/'
 notify = True
 notify_use = "notify-send"
 warning_threshold = [20, 15, 5]
@@ -71,39 +73,31 @@ for arg in sys.argv[1:]:
     if "--time" in key_value[0]:
         time_cycle = float(key_value[1])
 
-    if "--test_audio" in key_value[0]:
+    if "--test-audio" in key_value[0]:
         test_audio = True
 
-    if "--test_notify" in key_value[0]:
+    if "--test-notify" in key_value[0]:
         test_notify = True
 
 if test_audio:
-    audio_warning(audio_path)
+    print("Audio test")
+    audio_warning(audio_path + "warning.wav")
 
 if test_notify:
+    print("Notify test")
     notify_warning(notify_use, "Test")
+    time.sleep(time_cycle)
 
 if test_audio or test_notify:
     exit()
 
 warning_threshold = sorted(warning_threshold, reverse=True)
 
-############################################
-# ------------ Notify manager ------------ #
-############################################
-
-
-def notify_warning(use, text):
-    os.system("{} '{}'".format(use, str(text)))
-
-
-def audio_warning(use):
-    os.system("{} ~/.config/i3battery/warning.ogg".format(use))
-
 
 ############################################
 # ------------ Battery manager ----------- #
 ############################################
+
 
 power_path = "/sys/class/power_supply/"
 
@@ -147,15 +141,16 @@ while True:
             if notify:
                 notify_warning(notify_use,
                                "Warning: battery below {}".format(warning_threshold[threshold]))
-
             if audio:
-                audio_warning(audio_path)
+                audio_warning(audio_path+"warning.wav")
             threshold -= 1
 
         if has_alerted_charging and not has_alerted_discharging:
             has_alerted_discharging = False
             if notify:
                 notify_warning(notify_use, "Warning: battery discharging")
+            if audio:
+                audio_warning(audio_path+"plug-out.wav")
 
         has_alerted_charging = False
         has_alerted_full = False
@@ -168,6 +163,8 @@ while True:
             has_alerted_charging = True
             if notify:
                 notify_warning(notify_use, "Notice: battery charging")
+            if audio:
+                audio_warning(audio_path+"plug-in.wav")
 
         if capacity >= 98:
             if not has_alerted_full:

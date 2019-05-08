@@ -1,14 +1,14 @@
 install:
 	sudo chmod +x i3battery.py
 	sudo cp i3battery.py /usr/bin/i3battery
-	mkdir -p ~/.config/i3battery/audio/
-	sudo cp resources/* ~/.config/i3battery/audio/
 
 notify: install
 	sudo apt-get install libnotify-bin notify-osd
 
 audio: install
-	python3 -m pip install playsound
+	mkdir -p ~/.config/i3battery/audio/
+	sudo cp resources/audio/* ~/.config/i3battery/audio/
+	python3 -m pip install pygame
 
 all: audio notify
 
