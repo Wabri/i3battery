@@ -93,7 +93,7 @@ if test_audio or test_notify:
     exit()
 
 warning_threshold = sorted(warning_threshold, reverse=True)
-battery = power_path + battery
+battery_path = power_path + battery
 
 ############################################
 # ------------ Notify manager ------------ #
@@ -130,7 +130,7 @@ threshold = 2
 while True:
     power_supply_online = True if float(
         open(adapter+"/online", 'r').read()) == 1 else False
-    capacity = float(open(battery+"/capacity", 'r').read())
+    capacity = float(open(battery_path+"/capacity", 'r').read())
     print("-"*10)
     print("Power: {}%".format(capacity))
     print("Status: {}".format(
