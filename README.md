@@ -104,7 +104,7 @@ i3battery --audio_use=<command_to_use> --notify_use=<command_to_use>
 Execute this command on terminal:
 
 ```Bash
-ls /sys/class/power_supply/ | grep "BAT0"
+ls /sys/class/power_supply/ | grep "BAT"
 ```
 
 This can have multiple output:
