@@ -38,7 +38,7 @@ signal.signal(signal.SIGINT, signal_handler)
 ############################################
 
 power_path = "/sys/class/power_supply/"
-battery = power_path + "BAT0"
+battery = "BAT0"
 audio = False
 audio_use = "play"
 notify = True
@@ -81,7 +81,7 @@ for arg in sys.argv[1:]:
         power_path = key_value[1]
 
     if "--bat" in key_value[0]:
-        battery = power_path + key_value[1]
+        battery = key_value[1]
 
 if test_audio:
     audio_warning(audio_use)
@@ -93,6 +93,7 @@ if test_audio or test_notify:
     exit()
 
 warning_threshold = sorted(warning_threshold, reverse=True)
+battery = power_path + battery
 
 ############################################
 # ------------ Notify manager ------------ #
