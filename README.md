@@ -75,6 +75,8 @@ There are some arguments that you can use to change the configuration:
 * **--no-notify** to disabilitate notifications (default=abilitate)
 * **--wt=<wt1>,<wt2>,<wt3>** to set the warning threshold to different values (default=20,15,5)
 * **--time=<value>** to define the time of cycle (default=20)
+* **--power-path=<value>** to specify the path of the system class power supply (default=/sys/class/power_supply/)
+* **--bat=<value>** to specify the battery you want to use (default=BAT0)
 
 Here is an example:
 
@@ -84,8 +86,39 @@ i3battery --audio --audio_use=play --no-notify --wt=40,30,10 --time=5
 
 The default audio warning is installed on `~/.config/i3battery/warning.wav`, you can change by override this file.
 
-You can use different audio play with this arguments:
+You can use different audio play specifying this argument:
 
 ```bash
 i3battery --audio_use=<command_to_use>
 ```
+
+## How to make sure the used battery is the right one
+
+Execute this command on terminal:
+
+```Bash
+ls /sys/class/power_supply/ | grep "BAT"
+```
+
+This can have multiple output:
+
+1. The output is not null and return only the **BAT0** string, you don't need to do anything else and you can use the script as is.
+2. You have more than one batteries the output will be something like this:
+
+    ```Bash
+    BAT0 BAT1 BAT2
+    ```
+
+    In this case you need to specify what battery you want to use for this script by adding this argument:
+
+    ```Bash
+    i3battery --bat=BAT2
+    ```
+
+3. You have no output, this is the hard one. Maybe your power supply are stored in other path, than you need to find it and add the argument for that path:
+
+    ```Bash
+    i3battery --power-path=/sys/class/power_supply/
+    ```
+
+    Make sure to use the right battery even in this case (e.g. BAT1, BAT0)

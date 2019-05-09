@@ -40,7 +40,8 @@ signal.signal(signal.SIGINT, signal_handler)
 # ------------- Config loader ------------ #
 ############################################
 
-
+power_path = "/sys/class/power_supply/"
+battery = "BAT0"
 audio = False
 audio_use = "play"
 notify = True
@@ -79,6 +80,12 @@ for arg in sys.argv[1:]:
     if "--test-notify" in key_value[0]:
         test_notify = True
 
+    if "--power-path" in key_value[0]:
+        power_path = key_value[1]
+
+    if "--bat" in key_value[0]:
+        battery = key_value[1]
+
 if test_audio:
     audio_warning(audio_use)
 
@@ -89,25 +96,18 @@ if test_audio or test_notify:
     exit()
 
 warning_threshold = sorted(warning_threshold, reverse=True)
+battery_path = power_path + battery
 
 ############################################
 # ------------ Battery manager ----------- #
 ############################################
 
-power_path = "/sys/class/power_supply/"
-
-batteries = list()
-for bat_dir in glob.glob(power_path + "BAT*"):
-    batteries.append(bat_dir)
 
 adapter = glob.glob(power_path+"AC*")[0]
-
-battery = "BAT0" if "BAT0" in batteries.pop() else exit()
 
 has_alerted = [False, False, False]
 
 threshold = 2
-
 
 power_supply_online = True if float(
     open(adapter+"/online", 'r').read()) == 1 else False
@@ -121,7 +121,7 @@ threshold = 2
 while True:
     power_supply_online = True if float(
         open(adapter+"/online", 'r').read()) == 1 else False
-    capacity = float(open(power_path+battery+"/capacity", 'r').read())
+    capacity = float(open(battery_path+"/capacity", 'r').read())
     print("-"*10)
     print("Power: {}%".format(capacity))
     print("Status: {}".format(
@@ -148,6 +148,7 @@ while True:
 
         has_alerted_charging = False
         has_alerted_full = False
+
     else:
         has_alerted = [False, False, False]
         has_alerted_discharging = False
