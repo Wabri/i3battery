@@ -20,7 +20,26 @@ Then move into i3battery directory:
 cd i3battery
 ```
 
-And finally run and install i3battery:
+And finally run and install i3battery with 4 method:
+
+
+* all audio and notifications support:
+
+    ```bash
+    make all
+    ```
+    
+* with audio functions:
+
+    ```bash
+    make audio
+    ```
+
+* with notifications functions:
+
+    ```bash
+    make notification
+    ```
 
 * basics functions:
 
@@ -28,26 +47,12 @@ And finally run and install i3battery:
     make install
     ```
 
-* all audio support and notifications:
-
-    ```bash
-    make all
-    ```
-
 Now you can use i3battery.
 
-For the default audio settings you need to install sox:
+To test notifications and audio you can use the arguments test:
 
 ```bash
-sox
-```
-
-These dependencies are install with the make all command or you can install with apt-get.
-
-To test notifications and audio you can use the argument test:
-
-```bash
-i3battery --test-notify --audio-notify --audio-use=<command_audio>
+i3battery --test_notify --audio_notify
 ```
 
 ## I3 users
@@ -71,7 +76,7 @@ You can configure the running with the configurations below.
 There are some arguments that you can use to change the configuration:
 
 * **--audio** to abilitate audio (default=disable)
-* **--audio_use=<command_to_use>** to specify the command to run the audio (default=play)
+* **--audio_path=<path_to_audio_directory>** to specify the audio directory (default=.config/i3battery/audio/)
 * **--no-notify** to disabilitate notifications (default=abilitate)
 * **--wt=<wt1>,<wt2>,<wt3>** to set the warning threshold to different values (default=20,15,5)
 * **--time=<value>** to define the time of cycle (default=20)
@@ -85,12 +90,6 @@ i3battery --audio --audio_use=play --no-notify --wt=40,30,10 --time=5
 ```
 
 The default audio warning is installed on `~/.config/i3battery/warning.wav`, you can change by override this file.
-
-You can use different audio play specifying this argument:
-
-```bash
-i3battery --audio_use=<command_to_use>
-```
 
 ## How to make sure the used battery is the right one
 
