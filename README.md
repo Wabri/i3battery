@@ -86,10 +86,10 @@ There are some arguments that you can use to change the configuration:
 Here is an example:
 
 ```bash
-i3battery --audio --audio_use=play --no-notify --wt=40,30,10 --time=5
+i3battery --audio --audio-path=/home/wabri/Musics/i3battery/ --no-notify --wt=40,30,10 --time=5 --power-path=/sys/class/power_supply/ --bat=BAT1  
 ```
 
-The default audio warning is installed on `~/.config/i3battery/warning.wav`, you can change by override this file.
+The default audio warning is installed on `~/.config/i3battery/audio/`, you can change by override the files inside it (Warning: need to be wav files).
 
 ## How to make sure the used battery is the right one
 
