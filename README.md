@@ -28,7 +28,7 @@ And finally run and install i3battery with 4 method:
     ```bash
     make all
     ```
-    
+
 * with audio functions:
 
     ```bash
@@ -47,7 +47,13 @@ And finally run and install i3battery with 4 method:
     make install
     ```
 
-Now you can use i3battery.
+Try to run the help command:
+
+```Bash
+i3battery --help
+```
+
+If this return the commands list you can use than the i3battery is installed and you can use it.
 
 To test notifications and audio you can use the arguments test:
 
@@ -75,18 +81,18 @@ You can configure the running with the configurations below.
 
 There are some arguments that you can use to change the configuration:
 
-* **--audio** to abilitate audio (default=disable)
-* **--audio_path=<path_to_audio_directory>** to specify the audio directory (default=.config/i3battery/audio/)
-* **--no-notify** to disabilitate notifications (default=abilitate)
-* **--wt=<wt1>,<wt2>,<wt3>** to set the warning threshold to different values (default=20,15,5)
-* **--time=<value>** to define the time of cycle (default=20)
-* **--power-path=<value>** to specify the path of the system class power supply (default=/sys/class/power_supply/)
-* **--bat=<value>** to specify the battery you want to use (default=BAT0)
+* **`--audio`** to abilitate audio (default=disable)
+* **`--audio_path=<path_to_audio_directory>`** to specify the audio directory (default=.config/i3battery/audio/)
+* **`--no-notify`** to disabilitate notifications (default=abilitate)
+* **`--wt=<wt1>,<wt2>,<wt3>`** to set the warning threshold to different values (default=20,15,5)
+* **`--time=<value>`** to define the time of cycle (default=20)
+* **`--power-path=<value>`** to specify the path of the system class power supply (default=/sys/class/power_supply/)
+* **`--bat=<value>`** to specify the battery you want to use (default=BAT0)
 
 Here is an example:
 
 ```bash
-i3battery --audio --audio-path=/home/wabri/Musics/i3battery/ --no-notify --wt=40,30,10 --time=5 --power-path=/sys/class/power_supply/ --bat=BAT1  
+i3battery --audio --audio-path=/home/wabri/Musics/i3battery/audio/ --no-notify --wt=40,30,10 --time=5 --power-path=/sys/class/power_supply/ --bat=BAT1
 ```
 
 The default audio warning is installed on `~/.config/i3battery/audio/`, you can change by override the files inside it (Warning: need to be wav files).
