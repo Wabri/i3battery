@@ -7,14 +7,17 @@ import time
 import os
 import signal
 import sys
+import notify2
 
 ############################################
 # ------------ Notify manager ------------ #
 ############################################
 
 
-def notify_warning(use, text):
-    os.system("{} '{}'".format(use, str(text)))
+def notify_warning(notification_type, battery_name, text_show):
+    notify2.init(notification_type)
+    n = notify2.Notification(notification_type, battery_name + ' - ' + text_show)
+    n.show()
 
 
 def audio_warning(use):
@@ -71,10 +74,10 @@ for arg in sys.argv[1:]:
     if "--time" in key_value[0]:
         time_cycle = float(key_value[1])
 
-    if "--test_audio" in key_value[0]:
+    if "--test-audio" in key_value[0]:
         test_audio = True
 
-    if "--test_notify" in key_value[0]:
+    if "--test-notify" in key_value[0]:
         test_notify = True
 
     if "--power-path" in key_value[0]:
@@ -87,25 +90,13 @@ if test_audio:
     audio_warning(audio_use)
 
 if test_notify:
-    notify_warning(notify_use, "Test")
+    notify_warning('Notification Test', 'NO_BATTERY', "Test")
 
 if test_audio or test_notify:
     exit()
 
 warning_threshold = sorted(warning_threshold, reverse=True)
 battery_path = power_path + battery
-
-############################################
-# ------------ Notify manager ------------ #
-############################################
-
-
-def notify_warning(use, text):
-    os.system("{} '{}'".format(use, str(text)))
-
-
-def audio_warning(use):
-    os.system("{} ~/.config/i3battery/warning.ogg".format(use))
 
 ############################################
 # ------------ Battery manager ----------- #

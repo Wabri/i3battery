@@ -36,12 +36,6 @@ And finally run and install i3battery:
 
 Now you can use i3battery.
 
-For the default notify settings you need to install a notify deamon:
-
-```bash
-libnotify-bin notify-osd
-```
-
 For the default audio settings you need to install sox:
 
 ```bash
@@ -53,7 +47,7 @@ These dependencies are install with the make all command or you can install with
 To test notifications and audio you can use the argument test:
 
 ```bash
-i3battery --test_notify --audio_notify --audio_use=<command_audio> --notify_use=<command_notify>
+i3battery --test-notify --audio-notify --audio-use=<command_audio>
 ```
 
 ## I3 users
@@ -79,7 +73,6 @@ There are some arguments that you can use to change the configuration:
 * **--audio** to abilitate audio (default=disable)
 * **--audio_use=<command_to_use>** to specify the command to run the audio (default=play)
 * **--no-notify** to disabilitate notifications (default=abilitate)
-* **--notify_use=<command_to_use>** to specify the command to run the notify (default=notify-send)
 * **--wt=<wt1>,<wt2>,<wt3>** to set the warning threshold to different values (default=20,15,5)
 * **--time=<value>** to define the time of cycle (default=20)
 * **--power-path=<value>** to specify the path of the system class power supply (default=/sys/class/power_supply/)
@@ -88,15 +81,15 @@ There are some arguments that you can use to change the configuration:
 Here is an example:
 
 ```bash
-i3battery --audio --audio_use=play --no-notify --notify_use=notify-send --wt=40,30,10 --time=5
+i3battery --audio --audio_use=play --no-notify --wt=40,30,10 --time=5
 ```
 
-The default audio warning is installed on `~/.config/i3battery/warning.ogg`, you can change by override this file.
+The default audio warning is installed on `~/.config/i3battery/warning.wav`, you can change by override this file.
 
-You can use different notify sender and audio play with this arguments:
+You can use different audio play specifying this argument:
 
 ```bash
-i3battery --audio_use=<command_to_use> --notify_use=<command_to_use>
+i3battery --audio_use=<command_to_use>
 ```
 
 ## How to make sure the used battery is the right one
