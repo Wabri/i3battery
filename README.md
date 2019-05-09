@@ -20,8 +20,7 @@ Then move into i3battery directory:
 cd i3battery
 ```
 
-And finally run and install i3battery with 4 method:
-
+And finally run and install i3battery with 4 methods:
 
 * all audio and notifications support:
 
@@ -61,22 +60,6 @@ To test notifications and audio you can use the arguments test:
 i3battery --test_notify --audio_notify
 ```
 
-## I3 users
-
-To use this on i3wm you need to append to your i3 config file this line:
-
-```i3wm
-exec --no-startup-id i3battery
-```
-
-The most common use is audio without notifications:
-
-```i3wm
-exec --no-startup-id i3battery --audio --no-notify
-```
-
-You can configure the running with the configurations below.
-
 ## Configurations
 
 There are some arguments that you can use to change the configuration:
@@ -92,10 +75,30 @@ There are some arguments that you can use to change the configuration:
 Here is an example:
 
 ```bash
-i3battery --audio --audio-path=/home/wabri/Musics/i3battery/audio/ --no-notify --wt=40,30,10 --time=5 --power-path=/sys/class/power_supply/ --bat=BAT1
+i3battery --audio --audio-path=/home/wabri/.config/i3battery/audio/ --wt=77,78,76 --time=7 --power-path=/sys/class/power_supply/ --bat=BAT0
 ```
 
-The default audio warning is installed on `~/.config/i3battery/audio/`, you can change by override the files inside it (Warning: need to be wav files).
+The default audio warning is installed on `~/.config/i3battery/audio/`, you can change by override the files inside it (Warning: need to be wav files):
+
+* `warning.wav` -> use when reach one of the threshold
+* `plug-in.wav` -> use when the adapter goes online
+* `plug-out.wav` -> use when the adapter goes offline
+
+## I3 users
+
+To use this on i3wm you need to append to your i3 config file this line:
+
+```i3wm
+exec --no-startup-id i3battery
+```
+
+The most common use is audio without notifications:
+
+```i3wm
+exec --no-startup-id i3battery --audio --no-notify
+```
+
+You can configure the running with the configurations below.
 
 ## How to make sure the used battery is the right one
 
