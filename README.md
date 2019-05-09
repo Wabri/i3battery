@@ -1,6 +1,6 @@
 # i3battery
 
-![LOGO](LOGO.png)
+![LOGO](resources/LOGO.png)
 
 I made this script for my configuration of [i3wm](i3wm.org) because in this distro there isn't a battery warning notifier.
 
