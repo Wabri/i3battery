@@ -3,7 +3,7 @@ install:
 	sudo cp i3battery.py /usr/bin/i3battery
 
 notify: install
-	sudo apt-get install libnotify-bin notify-osd
+	python3 -m pip install notify2
 
 audio: install
 	mkdir -p ~/.config/i3battery/audio/

@@ -7,8 +7,43 @@ import signal
 import sys
 import time
 
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-from pygame import mixer
+try:
+  os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+  from pygame import mixer
+except:
+  print("-"*20)
+  print("Audio support are not installed")
+  print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
+  print("-"*20)
+  print("")
+ 
+try:
+  import notify2
+except:
+  print("-"*20)
+  print("Notify support are not installed")
+  print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
+  print("-"*20)
+  print("")
+
+  
+############################################
+# ------------ Notify manager ------------ #
+############################################
+
+def notify_warning(notification_type, battery_name, text_show):
+    notify2.init(notification_type)
+    n = notify2.Notification(notification_type, battery_name + ' - ' + text_show)
+    n.show()
+
+    
+def audio_warning(path):
+    mixer.init()
+    sound = mixer.Sound(path)
+    sound.play()
+    time.sleep(sound.get_length())
+    mixer.quit()
+
 
 ############################################
 # ------------ Signal handler ------------ #
@@ -20,27 +55,13 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-############################################
-# ------------ Notify manager ------------ #
-############################################
-
-
-def notify_warning(use, text):
-    os.system("{} '{}'".format(use, str(text)))
-
-
-def audio_warning(path):
-    mixer.init()
-    sound = mixer.Sound(path)
-    sound.play()
-    time.sleep(sound.get_length())
-    mixer.quit()
-
+    
 ############################################
 # ------------- Config loader ------------ #
 ############################################
 
-
+power_path = "/sys/class/power_supply/"
+battery = "BAT0"
 audio = False
 audio_path = os.path.expanduser('~') + '/.config/i3battery/audio/'
 notify = True
@@ -79,40 +100,35 @@ for arg in sys.argv[1:]:
     if "--test-notify" in key_value[0]:
         test_notify = True
 
+    if "--power-path" in key_value[0]:
+        power_path = key_value[1]
+
+    if "--bat" in key_value[0]:
+        battery = key_value[1]
+
 if test_audio:
     print("Audio test")
     audio_warning(audio_path + "warning.wav")
 
 if test_notify:
-    print("Notify test")
-    notify_warning(notify_use, "Test")
-    time.sleep(time_cycle)
+    notify_warning('Notification Test', 'NO_BATTERY', "Test")
 
 if test_audio or test_notify:
     exit()
 
 warning_threshold = sorted(warning_threshold, reverse=True)
+battery_path = power_path + battery
 
 
 ############################################
 # ------------ Battery manager ----------- #
 ############################################
 
-
-power_path = "/sys/class/power_supply/"
-
-batteries = list()
-for bat_dir in glob.glob(power_path + "BAT*"):
-    batteries.append(bat_dir)
-
 adapter = glob.glob(power_path+"AC*")[0]
-
-battery = "BAT0" if "BAT0" in batteries.pop() else exit()
 
 has_alerted = [False, False, False]
 
 threshold = 2
-
 
 power_supply_online = True if float(
     open(adapter+"/online", 'r').read()) == 1 else False
@@ -126,7 +142,7 @@ threshold = 2
 while True:
     power_supply_online = True if float(
         open(adapter+"/online", 'r').read()) == 1 else False
-    capacity = float(open(power_path+battery+"/capacity", 'r').read())
+    capacity = float(open(battery_path+"/capacity", 'r').read())
     print("-"*10)
     print("Power: {}%".format(capacity))
     print("Status: {}".format(
@@ -154,6 +170,7 @@ while True:
 
         has_alerted_charging = False
         has_alerted_full = False
+
     else:
         has_alerted = [False, False, False]
         has_alerted_discharging = False
