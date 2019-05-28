@@ -1,2 +1,5 @@
 # ignore useless vim files
 *.swp
+
+# ignore python cache
+__pycache__/
