@@ -9,18 +9,8 @@ import time
 
 from modules.Helper import Helper
 from modules.Warner import Warner
+from modules.Signaler import Signaler
 
-############################################
-# ------------ Signal handler ------------ #
-############################################
-
-def signal_handler(sig, frame):
-    print("\nI3Battery stop!")
-    print('-'*79)
-    Helper().print_infos()
-    print('-'*79)
-    print('Bye Bye!')
-    sys.exit(0)
 
 ############################################
 # ------------- Main Script -------------- #
@@ -30,7 +20,7 @@ print('-'*79)
 Helper().print_infos()
 
 if __name__== '__main__':
-    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, Signaler().signal_handler)
 
     helper = Helper()
     warner = Warner()
@@ -110,8 +100,7 @@ if __name__== '__main__':
     if test_audio:
         print("Audio test")
         print("Warning audio")
-        test_warning = audio_path + "warning.wav"
-        warner.audio_warning(test_warning)
+        warner.audio_warning(audio_path + "warning.wav")
         print("Plug-in audio")
         warner.audio_warning(audio_path + "plug-in.wav")
         print("Plug-out audio")
