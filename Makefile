@@ -1,6 +1,7 @@
 install:
-	sudo chmod +x i3battery.py
-	sudo cp i3battery.py /usr/bin/i3battery
+	sudo rm -f /usr/bin/i3battery
+	sudo cp -r ../i3battery /opt
+	sudo ln -s /opt/i3battery/i3battery.py /usr/bin/i3battery
 
 notify: install
 	python3 -m pip install notify2
@@ -14,4 +15,5 @@ all: audio notify
 
 unistall:
 	sudo rm -r /usr/bin/i3battery
+	sudo rm -r /opt/i3battery/
 	sudo rm -r ~/.config/i3battery
