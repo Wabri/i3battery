@@ -2,4 +2,4 @@
 .vscode
 
 # ignore vim temp files
-.swp
+*.swp
