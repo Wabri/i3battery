@@ -1,2 +1,5 @@
 # ignore vscode metafiles
 .vscode
+
+# ignore vim temp files
+.swp
