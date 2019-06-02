@@ -1,6 +1,7 @@
 install:
 	sudo rm -f /usr/bin/i3battery
-	sudo cp -r ../i3battery /opt
+	sudo cp -r ../i3battery/i3battery.py /opt
+	sudo cp -r ../i3battery/modules/ /opt/i3battery/
 	sudo ln -s /opt/i3battery/i3battery.py /usr/bin/i3battery
 
 notify: install
