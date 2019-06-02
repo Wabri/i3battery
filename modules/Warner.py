@@ -3,6 +3,7 @@ class Warner():
 # ------------ Notify manager ------------ #
 ############################################
 
+
     def notify_warning(self,notification_type, battery_name, text_show):
         try:
             import notify2
@@ -21,6 +22,7 @@ class Warner():
 
     def audio_warning(self, path):
         try:
+            import os
             os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
             from pygame import mixer
             mixer.init()
