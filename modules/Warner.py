@@ -23,6 +23,7 @@ class Warner():
     def audio_warning(self, path):
         try:
             import os
+            import time
             os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
             from pygame import mixer
             mixer.init()
