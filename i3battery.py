@@ -8,58 +8,9 @@ import sys
 import time
 
 from modules.Helper import Helper
+from modules.Warner import Warner
+from modules.Signaler import Signaler
 
-try:
-    os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-    from pygame import mixer
-except:
-    print("-"*79)
-    print("Audio support are not installed")
-    print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
-    print("-"*79)
-    print()
-
-try:
-    import notify2
-except:
-    print("-"*79)
-    print("Notify support are not installed")
-    print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
-    print("-"*79)
-    print()
-
-
-############################################
-# ------------ Notify manager ------------ #
-############################################
-
-
-def notify_warning(notification_type, battery_name, text_show):
-    notify2.init(notification_type)
-    n = notify2.Notification(
-        notification_type, battery_name + ' - ' + text_show)
-    n.show()
-
-
-def audio_warning(path):
-    mixer.init()
-    sound = mixer.Sound(path)
-    sound.play()
-    time.sleep(sound.get_length())
-    mixer.quit()
-
-
-############################################
-# ------------ Signal handler ------------ #
-############################################
-
-def signal_handler(sig, frame):
-    print("\nI3Battery stop!")
-    print('-'*79)
-    Helper().print_infos()
-    print('-'*79)
-    print('Bye Bye!')
-    sys.exit(0)
 
 ############################################
 # ------------- Main Script -------------- #
@@ -69,9 +20,10 @@ print('-'*79)
 Helper().print_infos()
 
 if __name__== '__main__':
-    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGINT, Signaler().signal_handler)
 
     helper = Helper()
+    warner = Warner()
 
     ############################################
     # ------------- Config loader ------------ #
@@ -148,15 +100,15 @@ if __name__== '__main__':
     if test_audio:
         print("Audio test")
         print("Warning audio")
-        audio_warning(audio_path + "warning.wav")
+        warner.audio_warning(audio_path + "warning.wav")
         print("Plug-in audio")
-        audio_warning(audio_path + "plug-in.wav")
+        warner.audio_warning(audio_path + "plug-in.wav")
         print("Plug-out audio")
-        audio_warning(audio_path + "plug-out.wav")
+        warner.audio_warning(audio_path + "plug-out.wav")
 
     if test_notify:
         print("Notify test")
-        notify_warning('Notification Test', 'NO_BATTERY', "Test")
+        warner.notify_warning('Notification Test', 'NO_BATTERY', "Test")
 
     if test_audio or test_notify:
         print('-'*79)
@@ -201,19 +153,19 @@ if __name__== '__main__':
             if has_alerted_charging and not has_alerted_discharging:
                 has_alerted_discharging = False
                 if notify:
-                    notify_warning('I3Battery warning', battery, 'discharging')
+                    warner.notify_warning('I3Battery warning', battery, 'discharging')
                 if audio:
-                    audio_warning(audio_path+"plug-out.wav")
+                    warner.audio_warning(audio_path+"plug-out.wav")
 
             if capacity < warning_threshold[threshold] and not has_alerted[threshold]:
                 has_alerted[threshold] = True
                 print("Warning battery below threshold {}".format(
                     warning_threshold[threshold]))
                 if notify:
-                    notify_warning('I3Battery warning', battery, 'battery below {}'.format(
+                    warner.notify_warning('I3Battery warning', battery, 'battery below {}'.format(
                         warning_threshold[threshold]))
                 if audio:
-                    audio_warning(audio_path+"warning.wav")
+                    warner.audio_warning(audio_path+"warning.wav")
                 threshold -= 1
 
             has_alerted_charging = False
@@ -227,15 +179,15 @@ if __name__== '__main__':
             if not has_alerted_charging:
                 has_alerted_charging = True
                 if notify:
-                    notify_warning('I3Battery notice', battery, 'charging')
+                    warner.notify_warning('I3Battery notice', battery, 'charging')
                 if audio:
-                    audio_warning(audio_path+"plug-in.wav")
+                    warner.audio_warning(audio_path+"plug-in.wav")
 
             if capacity >= 98:
                 if not has_alerted_full:
                     has_alerted_full = True
                     if notify:
-                        notify_warning('I3Battery notice', battery, 'full')
+                        warner.notify_warning('I3Battery notice', battery, 'full')
 
         print("-"*79)
         time.sleep(time_cycle)

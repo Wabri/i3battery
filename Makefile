@@ -15,6 +15,6 @@ audio: install
 all: audio notify
 
 unistall:
-	sudo rm -r /usr/bin/i3battery
-	sudo rm -r /opt/i3battery/
-	sudo rm -r ~/.config/i3battery
+	sudo rm -rf /usr/bin/i3battery
+	sudo rm -rf /opt/i3battery/
+	sudo rm -rf ~/.config/i3battery
