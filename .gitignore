@@ -1,0 +1,8 @@
+# ignore useless temp vim files
+*.swp
+
+# ignore python cache
+__pycache__/
+
+# ignore vscode metafiles
+.vscode

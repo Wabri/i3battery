@@ -7,282 +7,189 @@ import signal
 import sys
 import time
 
-try:
-    os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-    from pygame import mixer
-except:
-    print("-"*20)
-    print("Audio support are not installed")
-    print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
-    print("-"*20)
-    print("")
+from modules.Helper import Helper
+from modules.Warner import Warner
+from modules.Signaler import Signaler
 
-try:
-    import notify2
-except:
-    print("-"*20)
-    print("Notify support are not installed")
-    print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
-    print("-"*20)
-    print("")
 
 ############################################
-# ------------ Global variables ---------- #
+# ------------- Main Script -------------- #
 ############################################
 
-aspected_arguments = {
-    'pre-config': [
-        '--help'
-    ],
-    'pre-run': [
-        '--test-audio',
-        '--test-notify'
-    ],
-    'config': [
-        '--audio',
-        '--audio-path',
-        '--no-notify',
-        '--wt',
-        '--time',
-        '--power-path',
-        '--bat'
-    ]
-}
+print('-'*79)
+Helper().print_infos()
 
-############################################
-# ------------ Help printer -------------- #
-############################################
+if __name__== '__main__':
+    signal.signal(signal.SIGINT, Signaler().signal_handler)
 
-help_info = 'I3battery infos\n\nWeb Repository: https://github.com/Wabri/i3battery\nVersion: 1.0.1\nMantainers: Wabri - Gabriele Puliti'
+    helper = Helper()
+    warner = Warner()
 
-help_output = {
-    '--help': ['Print all the command and usage', '--help'],
-    '--audio': ['Abilitate audio (default=disabled)', '--audio'],
-    '--audio-path': ['Set the audio path (default=~/.config/i3battery/audio/', '--audio-path=<absolute_path>'],
-    '--no-notify': ['Disabilitate notification (default=abilitated)', '--no-notify'],
-    '--wt': ['Set the warning threshold to different values. You can use a non order list of the value, the scripts order for you. You can set up max 3 values. (default=20,15,5)', '--wt=<value_1>,<value_2>,<value_3>'],
-    '--time': ['Define the time of cycle (default=20)', '--time=<seconds>'],
-    '--power-path': ['Specify the path of the system class power supply (default=/sys/class/power_supply/)', '--power-path=<absolute_path>'],
-    '--bat': ['Specify the battery you want to use (default=BAT0)', '--bat=<battery_name>'],
-    '--test-audio': ['Use it to test the audio notifications', '--test-audio'],
-    '--test-notify': ['Use it to test the notifications functionality', '--test-notify']
-}
+    ############################################
+    # ------------- Config loader ------------ #
+    ############################################
 
-help_command_example = 'i3battery --audio --audio-path=/home/wabri/.config/i3battery/audio/ --wt=77,78,76 --time=7 --power-path=/sys/class/power_supply/ --bat=BAT0'
+    args = sys.argv[1:]
 
-def print_help():
-    print('-'*20)
-    print(help_info)
-    print('-'*20)
+    if '--help' in args:
+        print('-'*79)
+        helper.print_help()
+        exit()
+
+    print('-'*79)
+    print("Load i3Battery configuration")
     print()
-    print("Usage: i3battery", end=" ")
-    for key in help_output.keys():
-        print("[{}]".format(help_output[key][1]), end=" ")
-    print("\n\nThese are the common i3battery argument:")
-    for key in help_output.keys():
-        print('   {}   {}'.format(key, help_output[key][0]))
-    print()
-    print("Here it's an example:")
-    print('   {}'.format(help_command_example))
+    power_path = "/sys/class/power_supply/"
+    battery = "BAT0"
+    audio = False
+    audio_path = os.path.expanduser('~') + '/.config/i3battery/audio/'
+    notify = True
+    notify_use = "notify-send"
+    warning_threshold = [20, 15, 5]
+    time_cycle = 20.0
+    test_audio = False
+    test_notify = False
 
-############################################
-# ------------ Notify manager ------------ #
-############################################
+    for arg in args:
+        key_value = arg.split("=")
 
+        if '--audio' in key_value[0]:
+            print("Setting up audio")
+            audio = True
+            print("audio={}".format(audio))
 
-def notify_warning(notification_type, battery_name, text_show):
-    notify2.init(notification_type)
-    n = notify2.Notification(
-        notification_type, battery_name + ' - ' + text_show)
-    n.show()
+        if '--audio-path' in key_value[0]:
+            print("Setting up audio path")
+            audio_path = key_value[1]
+            print("audio_path={}".format(audio_path))
 
+        if '--no-notify' in key_value[0]:
+            print("Setting up no notifications")
+            notify = False
+            print("notify={}".format(notify))
 
-def audio_warning(path):
-    mixer.init()
-    sound = mixer.Sound(path)
-    sound.play()
-    time.sleep(sound.get_length())
-    mixer.quit()
+        if '--wt' in key_value[0]:
+            print("Setting up warning threshold")
+            warnings = key_value[1].split(",")
+            for threshold in range(len(warnings)):
+                warning_threshold[threshold] = (float)(warnings[threshold])
+                print("warning_threshold {}={}".format(
+                    threshold, warnings[threshold]))
 
+        if '--time' in key_value[0]:
+            print("Setting up time cycle")
+            time_cycle = float(key_value[1])
+            print("time_cycle={}".format(time_cycle))
 
-############################################
-# ------------ Signal handler ------------ #
-############################################
+        if '--power-path' in key_value[0]:
+            print("Setting up power_path")
+            power_path = key_value[1]
+            print("power_path={}".format(power_path))
 
-def signal_handler(sig, frame):
-    print("\nI3Battery stop!")
-    print('-'*20)
-    print(help_info)
-    print('-'*20)
-    print('Bye Bye!')
-    sys.exit(0)
+        if '--bat' in key_value[0]:
+            print("Setting up battery")
+            battery = key_value[1]
+            print("battery={}".format(battery))
 
+        if '--test-audio' in key_value[0]:
+            test_audio = True
 
-signal.signal(signal.SIGINT, signal_handler)
+        if '--test-notify' in key_value[0]:
+            test_notify = True
 
-############################################
-# ------------- Config loader ------------ #
-############################################
+    if test_audio:
+        print("Audio test")
+        print("Warning audio")
+        warner.audio_warning(audio_path + "warning.wav")
+        print("Plug-in audio")
+        warner.audio_warning(audio_path + "plug-in.wav")
+        print("Plug-out audio")
+        warner.audio_warning(audio_path + "plug-out.wav")
 
-args = sys.argv[1:]
+    if test_notify:
+        print("Notify test")
+        warner.notify_warning('Notification Test', 'NO_BATTERY', "Test")
 
-if aspected_arguments['pre-config'][0] in args:
-    print_help()
-    exit()
+    if test_audio or test_notify:
+        print('-'*79)
+        exit()
 
-print("-"*23)
-print("I3Battery configuration")
-print("-"*23)
+    warning_threshold = sorted(warning_threshold, reverse=False)
+    battery_path = power_path + battery
 
-power_path = "/sys/class/power_supply/"
-battery = "BAT0"
-audio = False
-audio_path = os.path.expanduser('~') + '/.config/i3battery/audio/'
-notify = True
-notify_use = "notify-send"
-warning_threshold = [20, 15, 5]
-time_cycle = 20.0
-test_audio = False
-test_notify = False
+    ############################################
+    # ------------ Battery manager ----------- #
+    ############################################
 
-for arg in args:
-    key_value = arg.split("=")
+    print("-"*79)
+    print("I3battery start")
+    print("-"*79)
 
-    if aspected_arguments['config'][0] in key_value[0]:
-        print("Setting up audio")
-        audio = True
-        print("audio={}".format(audio))
+    adapter = glob.glob(power_path+"AC*")[0]
 
-    if aspected_arguments['config'][1] in key_value[0]:
-        print("Setting up audio path")
-        audio_path = key_value[1]
-        print("audio_path={}".format(audio_path))
+    has_alerted = [False, False, False]
 
-    if aspected_arguments['config'][2] in key_value[0]:
-        print("Setting up no notifications")
-        notify = False
-        print("notify={}".format(notify))
+    threshold = 2
 
-    if aspected_arguments['config'][3] in key_value[0]:
-        print("Setting up warning threshold")
-        warnings = key_value[1].split(",")
-        for threshold in range(len(warnings)):
-            warning_threshold[threshold] = (float)(warnings[threshold])
-            print("warning_threshold {}={}".format(
-                threshold, warnings[threshold]))
-
-    if aspected_arguments['config'][4] in key_value[0]:
-        print("Setting up time cycle")
-        time_cycle = float(key_value[1])
-        print("time_cycle={}".format(time_cycle))
-
-    if aspected_arguments['config'][5] in key_value[0]:
-        print("Setting up power_path")
-        power_path = key_value[1]
-        print("power_path={}".format(power_path))
-
-    if aspected_arguments['config'][6] in key_value[0]:
-        print("Setting up battery")
-        battery = key_value[1]
-        print("battery={}".format(battery))
-
-    if aspected_arguments['pre-run'][0] in key_value[0]:
-        test_audio = True
-
-    if aspected_arguments['pre-run'][1] in key_value[0]:
-        test_notify = True
-
-if test_audio:
-    print("Audio test")
-    print("Warning audio")
-    audio_warning(audio_path + "warning.wav")
-    print("Plug-in audio")
-    audio_warning(audio_path + "plug-in.wav")
-    print("Plug-out audio")
-    audio_warning(audio_path + "plug-out.wav")
-
-if test_notify:
-    print("Notify test")
-    notify_warning('Notification Test', 'NO_BATTERY', "Test")
-
-if test_audio or test_notify:
-    exit()
-
-warning_threshold = sorted(warning_threshold, reverse=False)
-battery_path = power_path + battery
-
-
-############################################
-# ------------ Battery manager ----------- #
-############################################
-
-print("-"*15)
-print("I3battery start")
-print("-"*15)
-
-adapter = glob.glob(power_path+"AC*")[0]
-
-has_alerted = [False, False, False]
-
-threshold = 2
-
-power_supply_online = True if float(
-    open(adapter+"/online", 'r').read()) == 1 else False
-
-has_alerted_full = False
-has_alerted_charging = power_supply_online
-has_alerted_discharging = not power_supply_online
-
-threshold = 2
-
-while True:
     power_supply_online = True if float(
         open(adapter+"/online", 'r').read()) == 1 else False
-    capacity = float(open(battery_path+"/capacity", 'r').read())
-    print("Power: {}%".format(capacity))
-    print("Status: {}".format(
-        "Discharging" if not power_supply_online else "Charging"))
 
-    if not power_supply_online:
+    has_alerted_full = False
+    has_alerted_charging = power_supply_online
+    has_alerted_discharging = not power_supply_online
 
-        if has_alerted_charging and not has_alerted_discharging:
-            has_alerted_discharging = False
-            if notify:
-                notify_warning('I3Battery warning', battery, 'discharging')
-            if audio:
-                audio_warning(audio_path+"plug-out.wav")
+    threshold = 2
 
-        if capacity < warning_threshold[threshold] and not has_alerted[threshold]:
-            has_alerted[threshold] = True
-            print("Warning battery below threshold {}".format(
-                warning_threshold[threshold]))
-            if notify:
-                notify_warning('I3Battery warning', battery, 'battery below {}'.format(
-                    warning_threshold[threshold]))
-            if audio:
-                audio_warning(audio_path+"warning.wav")
-            threshold -= 1
+    while True:
+        power_supply_online = True if float(
+            open(adapter+"/online", 'r').read()) == 1 else False
+        capacity = float(open(battery_path+"/capacity", 'r').read())
+        print("Power: {}%".format(capacity))
+        print("Status: {}".format(
+            "Discharging" if not power_supply_online else "Charging"))
 
-        has_alerted_charging = False
-        has_alerted_full = False
+        if not power_supply_online:
 
-    else:
-        has_alerted = [False, False, False]
-        has_alerted_discharging = False
-        threshold = 2
-
-        if not has_alerted_charging:
-            has_alerted_charging = True
-            if notify:
-                notify_warning('I3Battery notice', battery, 'charging')
-            if audio:
-                audio_warning(audio_path+"plug-in.wav")
-
-        if capacity >= 98:
-            if not has_alerted_full:
-                has_alerted_full = True
+            if has_alerted_charging and not has_alerted_discharging:
+                has_alerted_discharging = False
                 if notify:
-                    notify_warning('I3Battery notice', battery, 'full')
+                    warner.notify_warning('I3Battery warning', battery, 'discharging')
+                if audio:
+                    warner.audio_warning(audio_path+"plug-out.wav")
 
-    print("-"*10)
-    time.sleep(time_cycle)
+            if capacity < warning_threshold[threshold] and not has_alerted[threshold]:
+                has_alerted[threshold] = True
+                print("Warning battery below threshold {}".format(
+                    warning_threshold[threshold]))
+                if notify:
+                    warner.notify_warning('I3Battery warning', battery, 'battery below {}'.format(
+                        warning_threshold[threshold]))
+                if audio:
+                    warner.audio_warning(audio_path+"warning.wav")
+                threshold -= 1
+
+            has_alerted_charging = False
+            has_alerted_full = False
+
+        else:
+            has_alerted = [False, False, False]
+            has_alerted_discharging = False
+            threshold = 2
+
+            if not has_alerted_charging:
+                has_alerted_charging = True
+                if notify:
+                    warner.notify_warning('I3Battery notice', battery, 'charging')
+                if audio:
+                    warner.audio_warning(audio_path+"plug-in.wav")
+
+            if capacity >= 98:
+                if not has_alerted_full:
+                    has_alerted_full = True
+                    if notify:
+                        warner.notify_warning('I3Battery notice', battery, 'full')
+
+        print("-"*79)
+        time.sleep(time_cycle)
+
+print('-'*79)
