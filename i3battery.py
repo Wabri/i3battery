@@ -7,27 +7,22 @@ import signal
 import sys
 import time
 
-from modules.Helper import Helper
-from modules.Warner import Warner
-from modules.Signaler import Signaler
-
+import modules.Helper as hp
+import modules.Warner as wr
+import modules.Signaler as sn
 
 ############################################
 # ------------- Main Script -------------- #
 ############################################
 
 print('-'*79)
-Helper().print_infos()
+hp.Helper().print_infos()
 
 if __name__== '__main__':
-    signal.signal(signal.SIGINT, Signaler().signal_handler)
+    signal.signal(signal.SIGINT, sn.Signaler().signal_handler)
 
-    helper = Helper()
-    warner = Warner()
-
-    ############################################
-    # ------------- Config loader ------------ #
-    ############################################
+    helper = hp.Helper()
+    warner = wr.Warner()
 
     args = sys.argv[1:]
 
@@ -116,10 +111,6 @@ if __name__== '__main__':
 
     warning_threshold = sorted(warning_threshold, reverse=False)
     battery_path = power_path + battery
-
-    ############################################
-    # ------------ Battery manager ----------- #
-    ############################################
 
     print("-"*79)
     print("I3battery start")
