@@ -10,11 +10,10 @@ audio: pip install
 
 pip:
 	sudo apt install python3-pip
-  
+
 install:
 	sudo rm -f /usr/bin/i3battery
-	sudo cp -r ../i3battery/i3battery.py /opt
-	sudo cp -r ../i3battery/modules/ /opt/i3battery/
+	sudo cp -r ../i3battery /opt
 	sudo ln -s /opt/i3battery/i3battery.py /usr/bin/i3battery
 
 unistall:
