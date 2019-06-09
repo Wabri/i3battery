@@ -1,3 +1,12 @@
+try:
+    import notify2
+except:
+    print("-"*79)
+    print("Notify support are not installed")
+    print("Read the installation guide on: https://github.com/Wabri/i3battery#install")
+    print("-"*79)
+    print()
+
 class Warner():
     """This class define the methods to show notifications and sound warnings.
     """
@@ -32,11 +41,11 @@ class Warner():
 
         """
         try:
-            import notify2
             notify2.init(notification_type)
             notification = notify2.Notification(
                 notification_type, battery_name + ' - ' + text_show)
             notification.show()
+            del notification
             return True
         except:
             print("-"*79)
@@ -65,6 +74,7 @@ class Warner():
             True if there is no error in the audio, False otherwise.
 
         """
+
         try:
             import os
             import time
@@ -75,6 +85,8 @@ class Warner():
             sound.play()
             time.sleep(sound.get_length())
             mixer.quit()
+            del mixer
+            del sound
             return True
         except:
             print("-"*79)
