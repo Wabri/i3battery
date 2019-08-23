@@ -1,7 +1,3 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 
 defaults: &defaults
@@ -32,16 +28,11 @@ jobs:
         name: Test i3Battery
         command: |
             . venv/bin/activate
-            python i3battery --test_notify --audio_notify
+            python i3battery --test-notify --test-audio
 
 workflows:
   version: 2
   test-i3battery:
     jobs:
-      - run_i3battery:
-        filters:
-          branches:
-            only:
-              - master
-              - develop
+      - run_i3battery
 
