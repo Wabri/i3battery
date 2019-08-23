@@ -1,0 +1,47 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+
+defaults: &defaults
+  docker:
+    - image: circleci/python:3.7
+  working_directory: ~/project
+
+prepare_venv: &prepare_venv
+  run:
+      name: Create venv
+      command: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+
+jobs:
+  run_i3battery:
+    <<: *defaults
+    steps:
+      - checkout
+      - *prepare_venv
+      - run:
+          name: Install requirements
+          command: |
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+        name: Test i3Battery
+        command: |
+            . venv/bin/activate
+            python i3battery --test_notify --audio_notify
+
+workflows:
+  version: 2
+  test-i3battery:
+    jobs:
+      - run_i3battery:
+        filters:
+          branches:
+            only:
+              - master
+              - develop
+
