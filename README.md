@@ -57,7 +57,7 @@ If this return the commands list you can use than the i3battery is installed and
 To test notifications and audio you can use the arguments test:
 
 ```bash
-i3battery --test_notify --audio_notify
+i3battery --test-notify --test-audio
 ```
 
 ## Configurations
