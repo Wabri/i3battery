@@ -28,7 +28,7 @@ jobs:
           name: Test i3Battery
           command: |
             source venv/bin/activate
-            PYTHONPATH=./packages/i3attery python3 packages/i3battery/i3battery.py
+            PYTHONPATH=./packages/i3attery python3 packages/i3battery/i3battery.py --test-audio --test-notify
 
 workflows:
   version: 2
