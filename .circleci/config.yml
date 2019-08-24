@@ -27,8 +27,8 @@ jobs:
       - run:
           name: Test i3Battery
           command: |
-            . venv/bin/activate
-            python -m i3battery --test-notify --test-audio
+            source venv/bin/activate
+            i3battery --test-notify --test-audio
 
 workflows:
   version: 2
