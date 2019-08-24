@@ -1,3 +1,6 @@
+from modules.Helper import Helper
+import sys
+
 class Signaler():
     """This class contains all the method use to handle the interrupt.
     """
@@ -20,8 +23,6 @@ class Signaler():
         None
 
         """
-        from modules.Helper import Helper
-        import sys
         print("\nI3Battery stop!")
         print('-'*79)
         Helper().print_infos()
