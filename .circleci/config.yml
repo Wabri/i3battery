@@ -22,13 +22,13 @@ jobs:
       - run:
           name: Install requirements
           command: |
-            . venv/bin/activate
+            source venv/bin/activate
             pip install -r requirements.txt
       - run:
           name: Test i3Battery
           command: |
-            . venv/bin/activate
-            python i3battery.py --test-notify --test-audio
+            source venv/bin/activate
+            PYTHONPATH=./packages/i3attery python3 packages/i3battery/i3battery.py --test-audio --test-notify
 
 workflows:
   version: 2
