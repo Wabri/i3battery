@@ -11,13 +11,6 @@ import modules.Helper as hp
 import modules.Warner as wr
 import modules.Signaler as sn
 
-############################################
-# ------------- Main Script -------------- #
-############################################
-
-print('-'*79)
-hp.Helper().print_infos()
-
 if __name__== '__main__':
     signal.signal(signal.SIGINT, sn.Signaler().signal_handler)
 
@@ -30,6 +23,9 @@ if __name__== '__main__':
         print('-'*79)
         helper.print_help()
         exit()
+
+    print('-'*79)
+    hp.Helper().print_infos()
 
     print('-'*79)
     print("Load i3Battery configuration")
