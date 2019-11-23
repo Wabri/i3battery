@@ -1,5 +1,7 @@
 # i3battery
 
+[![CircleCI](https://circleci.com/gh/Wabri/i3battery.svg?style=svg)](https://circleci.com/gh/Wabri/i3battery)
+
 ![LOGO](resources/LOGO.png)
 
 I made this script for my configuration of [i3wm](i3wm.org) because in this distro there isn't a battery warning notifier.
