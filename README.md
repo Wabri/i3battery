@@ -20,31 +20,11 @@ Then move into i3battery directory:
 cd i3battery
 ```
 
-And finally run and install i3battery with 4 methods:
+And finally run and install i3battery:
 
-* all audio and notifications support:
-
-    ```bash
-    make all
-    ```
-
-* with audio functions:
-
-    ```bash
-    make audio
-    ```
-
-* with notifications functions:
-
-    ```bash
-    make notification
-    ```
-
-* basics functions:
-
-    ```bash
-    make install
-    ```
+```Bash
+./install.sh
+```
 
 Try to run the help command:
 
